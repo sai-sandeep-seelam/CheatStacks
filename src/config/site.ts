@@ -3,5 +3,5 @@ export const siteConfig = {
   description: "Modern, fast, static cheatsheets for developers.",
   author: "CheatStack Team",
   url: "https://cheatstack.vercel.app",
-  github: "https://github.com/yourusername/cheatstack",
+  github: "https://github.com/sai-sandeep-seelam/CheatStacks",
 };
