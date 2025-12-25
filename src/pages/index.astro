@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getAllCheatsheets } from '../utils/cheatsheets';
+import { siteConfig } from '../config/site';
+
+const cheatsheets = getAllCheatsheets();
+
+// Group by category
+const categories = cheatsheets.reduce((acc, sheet) => {
+    const cat = sheet.meta.category || 'Other';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(sheet);
+    return acc;
+}, {} as Record<string, typeof cheatsheets>);
+
+const sortedCategories = Object.keys(categories).sort();
+---
+
+<Layout title={siteConfig.title}>
+  <div class="max-w-3xl mx-auto text-center mb-16">
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl mb-6">
+      The Ultimate <span class="text-blue-600 dark:text-blue-400">Developer</span> Cheatsheets
+    </h1>
+    <p class="text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
+      A fast, modern, and open-source collection of cheatsheets. 
+      <br class="hidden sm:inline" />
+      Powered by the community and built for performance.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+    {sortedCategories.map(category => (
+      <div class="break-inside-avoid">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4 flex items-center">
+            {category}
+            <span class="ml-auto text-xs font-normal text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{categories[category].length}</span>
+        </h2>
+        <ul class="space-y-1">
+          {categories[category].map(sheet => (
+            <li>
+              <a href={`/cheatsheets/${sheet.slug}`} class="group flex items-center justify-between px-3 py-2 -mx-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200">
+                <span class="text-slate-600 dark:text-slate-400 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate pr-4">{sheet.meta.title}</span>
+                <span class="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</Layout>
