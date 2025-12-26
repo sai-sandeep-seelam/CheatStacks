@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../config/site';
+
+const title = `Bookmarks - ${siteConfig.title}`;
+const description = 'Your saved cheatsheet bookmarks.';
+---
+
+<Layout title={title} description={description}>
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center text-slate-900 dark:text-white mb-8">Your Bookmarks</h1>
+    
+    <div id="bookmarks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Bookmarks will be loaded here -->
+    </div>
+    
+    <div id="no-bookmarks" class="text-center text-slate-600 dark:text-slate-400 mt-8 hidden">
+      <p>You haven't bookmarked any cheatsheets yet.</p>
+      <p class="mt-2">Browse cheatsheets and click the bookmark icon to save them here.</p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const bookmarks = JSON.parse(localStorage.getItem('cheatstack-bookmarks') || '[]');
+    const bookmarksList = document.getElementById('bookmarks-list');
+    const noBookmarks = document.getElementById('no-bookmarks');
+    
+    if (bookmarks.length === 0) {
+      noBookmarks.classList.remove('hidden');
+      return;
+    }
+    
+    // Display bookmarks
+    bookmarks.forEach(bookmark => {
+      const card = document.createElement('div');
+      card.className = 'bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow';
+      card.innerHTML = `
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">${bookmark.title}</h3>
+        ${bookmark.category ? `<p class="text-sm text-slate-500 dark:text-slate-400 mb-2">${bookmark.category}</p>` : ''}
+        <a href="/cheatsheets/${bookmark.slug}" class="text-blue-600 hover:text-blue-500 dark:text-blue-400 inline-flex items-center gap-1">
+          View Cheatsheet
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      `;
+      bookmarksList.appendChild(card);
+    });
+  });
+</script>
