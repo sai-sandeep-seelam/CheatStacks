@@ -1,0 +1,67 @@
+---
+import { Bookmark } from 'lucide-astro';
+
+interface Props {
+  slug: string;
+  title: string;
+  category?: string;
+}
+
+const { slug, title, category } = Astro.props;
+---
+
+<button
+  data-slug={slug}
+  data-title={title}
+  data-category={category}
+  class="bookmark-btn p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors"
+  title="Bookmark"
+>
+  <Bookmark class="w-5 h-5 bookmark-icon" />
+</button>
+
+<script>
+  import { isBookmarked, toggleBookmark } from '../utils/bookmarks';
+
+  const buttons = document.querySelectorAll('.bookmark-btn');
+
+  function updateButtonState(btn: Element) {
+    const slug = btn.getAttribute('data-slug')!;
+    const icon = btn.querySelector('.bookmark-icon');
+    
+    if (isBookmarked(slug)) {
+      icon?.classList.add('fill-yellow-500', 'text-yellow-500');
+      icon?.classList.remove('text-gray-400');
+    } else {
+      icon?.classList.remove('fill-yellow-500', 'text-yellow-500');
+      icon?.classList.add('text-gray-400');
+    }
+  }
+
+  buttons.forEach(btn => {
+    updateButtonState(btn);
+
+    btn.addEventListener('click', (e) => {
+      const loggedIn = localStorage.getItem('loggedIn');
+      
+      if (loggedIn !== 'true') {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Show alert to user
+        const confirmed = confirm('You need to login to bookmark cheatsheets. Would you like to go to the login page?');
+        if (confirmed) {
+          window.location.href = '/login';
+        }
+        return;
+      }
+      
+      const slug = btn.getAttribute('data-slug')!;
+      const title = btn.getAttribute('data-title')!;
+      const category = btn.getAttribute('data-category') || undefined;
+
+      toggleBookmark({ slug, title, category });
+      updateButtonState(btn);
+    });
+  });
+</script>

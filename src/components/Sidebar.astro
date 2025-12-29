@@ -1,0 +1,53 @@
+---
+import { getAllCheatsheets } from '../utils/cheatsheets';
+
+const cheatsheets = getAllCheatsheets();
+
+// Group by category
+const categories = cheatsheets.reduce((acc, sheet) => {
+    const cat = sheet.meta.category || 'Other';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(sheet);
+    return acc;
+}, {} as Record<string, typeof cheatsheets>);
+
+const sortedCategories = Object.keys(categories).sort();
+---
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out lg:static lg:h-screen lg:sticky lg:top-16 lg:overflow-y-auto pb-10">
+  <div class="p-4 lg:p-6">
+    <nav class="space-y-8">
+      {sortedCategories.map(category => (
+        <div>
+          <h3 class="font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3 px-2">{category}</h3>
+          <ul class="space-y-0.5">
+            {categories[category].map(sheet => (
+              <li>
+                <a href={`/cheatsheets/${sheet.slug}`} class="block px-2 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-md transition-colors truncate">
+                  {sheet.meta.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+</aside>
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const menuButton = document.getElementById('menu-button'); // This will be in Header
+
+    function toggleSidebar() {
+        sidebar?.classList.toggle('-translate-x-full');
+        overlay?.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    menuButton?.addEventListener('click', toggleSidebar);
+    overlay?.addEventListener('click', toggleSidebar);
+</script>

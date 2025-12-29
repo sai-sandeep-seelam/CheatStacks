@@ -1,0 +1,165 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllCheatsheets, getCheatsheetContent } from '../../utils/cheatsheets';
+import { marked } from 'marked';
+import { getHighlighter } from '../../utils/highlighter';
+import BookmarkButton from '../../components/BookmarkButton.astro';
+
+export async function getStaticPaths() {
+  const cheatsheets = getAllCheatsheets();
+  return cheatsheets.map(sheet => ({
+    params: { slug: sheet.slug },
+    props: { sheet },
+  }));
+}
+
+const { sheet } = Astro.props;
+const content = getCheatsheetContent(sheet.slug);
+
+// Syntax highlighting configuration
+const highlighter = await getHighlighter();
+
+// Custom renderer for marked to use Shiki
+const renderer = new marked.Renderer();
+
+// Customizing code block rendering
+renderer.code = function(token) {  // Changed from (token) => { ... } to function(token) { ... }
+    try {
+        // Handle new marked signature (object as first arg)
+        let code = '';
+        let lang = '';
+        
+        if (typeof token === 'object' && token !== null) {
+            code = token.text || '';
+            lang = token.lang || '';
+        } else {
+            // Fallback for older versions or unexpected calls
+            code = token;
+            lang = arguments[1];  // Now accessible since it's a function
+        }
+
+        lang = lang || 'text';
+        
+        // Handle language aliases or unknown languages
+        // Shiki might throw if language is unknown, so we should try-catch or normalize
+        // But we have a try-catch block already.
+        
+        const html = highlighter.codeToHtml(code, {
+            lang,
+            themes: {
+                light: 'github-light',
+                dark: 'github-dark'
+            },
+            defaultColor: false
+        });
+        
+        return `<div class="relative group my-6 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#0d1117]">
+                  <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex gap-2">
+                     <span class="text-xs text-gray-400 font-mono py-1 px-2">${lang}</span>
+                     <button class="copy-btn bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-1.5 rounded-md text-xs font-medium shadow-sm transition-all" data-code="${encodeURIComponent(code)}">
+                        Copy
+                     </button>
+                  </div>
+                  <div class="code-block-wrapper overflow-x-hidden p-4 text-sm leading-relaxed">
+                    ${html}
+                  </div>
+                </div>`;
+    } catch (e) {
+        // Fallback to plain text if highlighting fails
+        return `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-hidden"><code>${token.text || token}</code></pre>`;
+    }
+};
+
+// Customizing heading rendering to add anchor links
+renderer.heading = function(text, level, raw) {
+  // Handle new marked signature (object as first arg)
+  if (typeof text === 'object' && text !== null) {
+      const token = text;
+      text = token.text || '';
+      level = token.depth || 1;
+      raw = token.raw || '';
+  }
+
+  const slug = (raw || text || '').toString().toLowerCase().replace(/[^\w]+/g, '-');
+  
+  return `
+    <h${level} id="${slug}" class="group flex items-center scroll-mt-24">
+      <a href="#${slug}" class="no-underline hover:underline text-inherit">
+        ${text}
+      </a>
+      <a href="#${slug}" class="ml-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-opacity" aria-label="Anchor">#</a>
+    </h${level}>
+  `;
+};
+
+marked.use({ renderer });
+
+// Remove frontmatter from content if it exists (some Devhints might still have it in body if my parser didn't strip it perfectly, but my parser separated it. Wait, my parser in import-devhints.ts SAVED only body. So content should be clean markdown.)
+const htmlContent = marked.parse(content);
+---
+
+<Layout title={`${sheet.meta.title} Cheatsheet`} description={`Cheatsheet for ${sheet.meta.title}. Quick reference and examples.`}>
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-10 border-b border-gray-200 dark:border-gray-800 pb-8">
+        <div class="flex items-center justify-between mb-6">
+             <div class="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
+                <span class="text-slate-300 dark:text-slate-600">/</span>
+                <span class="text-slate-900 dark:text-slate-200">{sheet.meta.category || 'Cheatsheets'}</span>
+             </div>
+             <div class="flex items-center gap-3">
+                 <BookmarkButton slug={sheet.slug} title={sheet.meta.title} category={sheet.meta.category} />
+                 <a href={`https://github.com/rstacruz/cheatsheets/blob/master/${sheet.slug}.md`} target="_blank" class="text-xs font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full">
+                    Edit on GitHub
+                 </a>
+             </div>
+        </div>
+        
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">{sheet.meta.title}</h1>
+        
+        {sheet.meta.tags && sheet.meta.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+                {sheet.meta.tags.map(tag => (
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300 border border-blue-100 dark:border-blue-500/20">
+                        {tag}
+                    </span>
+                ))}
+            </div>
+        )}
+    </div>
+
+    <article class="prose prose-slate dark:prose-invert max-w-none 
+        prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 dark:prose-headings:text-slate-100
+        prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:border-slate-200 dark:prose-h2:border-slate-800 prose-h2:pb-2
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
+        prose-p:leading-7 prose-p:text-slate-600 dark:prose-p:text-slate-300
+        prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-pink-50 dark:prose-code:bg-pink-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-mono prose-code:text-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none
+        prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0 prose-pre:border-0
+        prose-strong:text-slate-900 dark:prose-strong:text-white
+        prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+        prose-li:marker:text-slate-400 dark:prose-li:marker:text-slate-600">
+        <div set:html={htmlContent} />
+    </article>
+  </div>
+</Layout>
+
+<script>
+    // Copy button functionality
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const code = decodeURIComponent(btn.getAttribute('data-code') || '');
+            try {
+                await navigator.clipboard.writeText(code);
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('text-green-600', 'dark:text-green-400', 'border-green-200', 'dark:border-green-800');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('text-green-600', 'dark:text-green-400', 'border-green-200', 'dark:border-green-800');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        });
+    });
+</script>

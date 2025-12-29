@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About - CheatStack">
+  <div class="max-w-3xl mx-auto prose prose-slate dark:prose-invert">
+    <h1>About CheatStack</h1>
+    <p class="lead">
+      CheatStack is a modern, fast, and static cheatsheet website designed for developers.
+      It is inspired by Devhints and aims to provide a quick reference for various programming languages, tools, and frameworks.
+    </p>
+    
+    <h2>Why CheatStack?</h2>
+    <p>
+        We wanted a cheatsheet site that is extremely fast, works offline (via service workers in future), and has a modern, clean interface. 
+        Using <strong>Astro</strong> allows us to ship zero JavaScript for content by default, making the site load instantly.
+    </p>
+
+    <h2>Goals</h2>
+    <ul>
+      <li><strong>Speed:</strong> Built with Astro for optimal performance.</li>
+      <li><strong>Simplicity:</strong> Clean UI/UX focused on readability and developer experience.</li>
+      <li><strong>Open Source:</strong> Community-driven content with easy contribution model.</li>
+      <li><strong>Accessible:</strong> Designed with accessibility in mind, including dark mode support.</li>
+    </ul>
+    
+    <h2>Tech Stack</h2>
+    <ul>
+      <li><strong>Framework:</strong> Astro</li>
+      <li><strong>Styling:</strong> Tailwind CSS</li>
+      <li><strong>Search:</strong> Fuse.js (Client-side fuzzy search)</li>
+      <li><strong>Syntax Highlighting:</strong> Shiki</li>
+      <li><strong>Icons:</strong> Lucide React</li>
+    </ul>
+  </div>
+</Layout>

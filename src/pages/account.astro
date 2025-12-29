@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../config/site';
+
+const title = `Account Info - ${siteConfig.title}`;
+const description = 'View your account information.';
+---
+
+<Layout title={title} description={description}>
+  <div class="max-w-md mx-auto mt-16">
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 border border-slate-200 dark:border-slate-700">
+      <h1 class="text-2xl font-bold text-center text-slate-900 dark:text-white mb-6">Account Information</h1>
+      
+      <div class="text-center mb-6">
+        <img id="account-avatar" src="" alt="Avatar" class="w-24 h-24 rounded-full mx-auto mb-4">
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Username</label>
+          <p id="account-username" class="mt-1 text-sm text-slate-900 dark:text-white"></p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+          <p id="account-email" class="mt-1 text-sm text-slate-900 dark:text-white"></p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Login Method</label>
+          <p id="account-method" class="mt-1 text-sm text-slate-900 dark:text-white"></p>
+        </div>
+      </div>
+      
+      <p class="text-center text-sm text-slate-600 dark:text-slate-400 mt-6">
+        <a href="/" class="text-blue-600 hover:text-blue-500 dark:text-blue-400">Back to Home</a>
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Load account info on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const user = localStorage.getItem('user');
+    const email = localStorage.getItem('email');
+    const image = localStorage.getItem('image');
+    const profilePic = localStorage.getItem('profilePic');
+    const avatar = document.getElementById('account-avatar');
+
+    document.getElementById('account-username').textContent = user || 'N/A';
+    document.getElementById('account-email').textContent = email || 'N/A';
+    document.getElementById('account-method').textContent = image ? 'Google' : (profilePic ? 'Custom Upload' : 'Form');
+
+    if (profilePic || image) {
+      avatar.src = profilePic || image;
+      avatar.onerror = function() {
+        this.src = 'https://www.w3schools.com/w3images/avatar2.png';
+      };
+    } else {
+      avatar.src = 'https://www.w3schools.com/w3images/avatar2.png';
+    }
+  });
+</script>

@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contribute - CheatStack">
+  <div class="max-w-3xl mx-auto prose prose-slate dark:prose-invert">
+    <h1>Contribute to CheatStack</h1>
+    <p class="lead">
+      We welcome contributions! CheatStack is designed to be easy to contribute to. 
+      Whether you want to add a new cheatsheet or improve an existing one, here is how.
+    </p>
+
+    <h2>Project Structure</h2>
+    <p>
+        Each cheatsheet lives in its own folder under <code>src/content/cheatsheets/</code>.
+        The folder name becomes the URL slug.
+    </p>
+
+    <h2>How to add a cheatsheet</h2>
+    <ol>
+      <li>Fork the repository.</li>
+      <li>Create a new folder in <code>src/content/cheatsheets/</code> with your topic name (e.g., <code>my-topic</code>).</li>
+      <li>Add an <code>index.md</code> file with the content using Markdown.</li>
+      <li>Add a <code>meta.json</code> file with metadata.</li>
+    </ol>
+
+    <h3>meta.json example</h3>
+    <pre><code class="language-json">&#123;
+  "title": "My Topic",
+  "tags": ["web", "tool"],
+  "category": "Tools",
+  "difficulty": "beginner",
+  "source": "Self"
+&#125;</code></pre>
+
+    <h2>Guidelines</h2>
+    <ul>
+        <li>Use H2 (<code>##</code>) for section headers.</li>
+        <li>Use H3 (<code>###</code>) for subsections.</li>
+        <li>Code blocks should specify the language for highlighting.</li>
+        <li>Keep it concise. It's a cheatsheet, not a tutorial.</li>
+    </ul>
+
+    <p>
+      Submit a Pull Request and we will review it!
+    </p>
+  </div>
+</Layout>

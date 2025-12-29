@@ -1,0 +1,121 @@
+---
+import SearchBar from './SearchBar.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { siteConfig } from '../config/site';
+import { Menu, Github, Bookmark } from 'lucide-astro';
+---
+
+<header class="sticky top-0 z-50 w-full backdrop-blur flex-none transition-colors duration-500 border-b border-slate-900/10 dark:border-slate-50/[0.06] bg-white/95 supports-backdrop-blur:bg-white/60 dark:bg-slate-900/75">
+  <div class="max-w-8xl mx-auto">
+    <div class="py-4 px-4 lg:px-8">
+      <div class="relative flex items-center justify-between">
+        
+        <div class="flex items-center">
+            <button type="button" class="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 mr-2" id="menu-button" aria-label="Open sidebar">
+                <Menu class="w-6 h-6" />
+            </button>
+            
+            <a class="flex items-center gap-2 mr-4" href="/">
+              <img src="/cheatstack-icon.png" alt="CheatStack Logo" class="w-11 h-11 rounded-lg">
+              <span class="font-bold text-xl text-slate-900 dark:text-white tracking-tight">{siteConfig.title}</span>
+            </a>
+        </div>
+
+        <div class="flex-1 max-w-2xl mx-4 hidden md:block">
+            <SearchBar />
+        </div>
+
+        <div class="flex items-center gap-4">
+            <nav class="text-sm font-semibold text-slate-700 dark:text-slate-200 hidden lg:block">
+                <ul class="flex items-center space-x-6">
+                    <li id="bookmarks-link" class="hidden"><a href="/bookmarks" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1 py-1"><Bookmark class="w-4 h-4" /> Bookmarks</a></li>
+                    <li id="login-link"><a href="/login" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Login</a></li>
+                    <li id="profile-link" class="hidden relative">
+                        <div class="flex items-center space-x-2 cursor-pointer" id="profile-trigger">
+                            <img id="profile-img" src="" alt="Profile" class="w-8 h-8 rounded-full hidden">
+                            <div id="profile-icon" class="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center text-slate-700 dark:text-slate-300 hidden">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="profile-menu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-md shadow-lg border border-slate-200 dark:border-slate-700 hidden z-50">
+                            <div class="py-1">
+                                <a href="/profile" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Change Profile</a>
+                                <a href="/account" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Account Info</a>
+                                <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700">Logout</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="flex items-center border-l border-slate-200 ml-2 pl-4 dark:border-slate-800 gap-2 h-10">
+                <ThemeToggle />
+                <a href={siteConfig.github} class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <Github class="w-5 h-5" />
+                </a>
+            </div>
+        </div>
+
+      </div>
+      <div class="md:hidden mt-4">
+         <SearchBar />
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Check login status on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const loggedIn = localStorage.getItem('loggedIn');
+    const user = localStorage.getItem('user');
+    const profilePic = localStorage.getItem('image') || localStorage.getItem('profilePic');
+    const loginLink = document.getElementById('login-link');
+    const bookmarksLink = document.getElementById('bookmarks-link');
+    const profileLink = document.getElementById('profile-link');
+    const profileImg = document.getElementById('profile-img');
+    const profileIcon = document.getElementById('profile-icon');
+    const profileTrigger = document.getElementById('profile-trigger');
+    const profileMenu = document.getElementById('profile-menu');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (loggedIn === 'true' && user) {
+      loginLink.classList.add('hidden');
+      bookmarksLink.classList.remove('hidden');
+      profileLink.classList.remove('hidden');
+      if (profilePic) {
+        profileImg.src = profilePic;
+        profileImg.onerror = function() {
+          this.src = 'https://www.w3schools.com/w3images/avatar2.png';
+        };
+        profileImg.classList.remove('hidden');
+      } else {
+        // Use default human avatar if no profile picture
+        profileImg.src = 'https://www.w3schools.com/w3images/avatar2.png';
+        profileImg.classList.remove('hidden');
+      }
+    }
+
+    // Toggle dropdown
+    profileTrigger.addEventListener('click', function() {
+      profileMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!profileLink.contains(e.target)) {
+        profileMenu.classList.add('hidden');
+      }
+    });
+
+    logoutBtn.addEventListener('click', function() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('user');
+      localStorage.removeItem('email');
+      localStorage.removeItem('image');
+      window.location.href = '/login';
+    });
+  });
+</script>
