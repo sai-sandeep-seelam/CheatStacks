@@ -16,7 +16,7 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
             </button>
             
             <a class="flex items-center gap-2 mr-4" href="/">
-              <img src="/cheatstack-icon.png" alt="CheatStack Logo" class="w-11 h-11 rounded-lg">
+              <img src="/assets/cheatstack-icon.png" alt="CheatStack Logo" class="w-10 h-10 rounded-lg">
               <span class="font-bold text-xl text-slate-900 dark:text-white tracking-tight">{siteConfig.title}</span>
             </a>
         </div>
@@ -66,6 +66,8 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
   </div>
 </header>
 
+</header>
+
 <script>
   // Check login status on page load
   document.addEventListener('DOMContentLoaded', function() {
@@ -82,16 +84,16 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
     const logoutBtn = document.getElementById('logout-btn');
 
     if (loggedIn === 'true' && user) {
-      loginLink.classList.add('hidden');
-      bookmarksLink.classList.remove('hidden');
-      profileLink.classList.remove('hidden');
-      if (profilePic) {
+      loginLink?.classList.add('hidden');
+      bookmarksLink?.classList.remove('hidden');
+      profileLink?.classList.remove('hidden');
+      if (profilePic && profileImg instanceof HTMLImageElement) {
         profileImg.src = profilePic;
         profileImg.onerror = function() {
           this.src = 'https://www.w3schools.com/w3images/avatar2.png';
         };
         profileImg.classList.remove('hidden');
-      } else {
+      } else if (profileImg instanceof HTMLImageElement) {
         // Use default human avatar if no profile picture
         profileImg.src = 'https://www.w3schools.com/w3images/avatar2.png';
         profileImg.classList.remove('hidden');
@@ -99,18 +101,18 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
     }
 
     // Toggle dropdown
-    profileTrigger.addEventListener('click', function() {
-      profileMenu.classList.toggle('hidden');
+    profileTrigger?.addEventListener('click', function() {
+      profileMenu?.classList.toggle('hidden');
     });
 
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
-      if (!profileLink.contains(e.target)) {
-        profileMenu.classList.add('hidden');
+      if (profileLink && !profileLink.contains(e.target)) {
+        profileMenu?.classList.add('hidden');
       }
     });
 
-    logoutBtn.addEventListener('click', function() {
+    logoutBtn?.addEventListener('click', function() {
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('user');
       localStorage.removeItem('email');

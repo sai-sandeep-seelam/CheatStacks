@@ -10,17 +10,19 @@ interface Props {
 }
 
 const { title = siteConfig.title, description = siteConfig.description } = Astro.props;
----
 
 <!doctype html>
 <html lang="en" class="scroll-smooth">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/cheatstack-icon.svg" />
-    <link rel="apple-touch-icon" href="/cheatstack-icon.png" />
+    <link rel="icon" type="image/png" href="/assets/cheatstack-icon.png" />
+    <link rel="apple-touch-icon" href="/assets/cheatstack-icon.png" />
+     <link rel="icon" type="image/png" href="/assets/cheatstack-icon.png" />
+     <link rel="apple-touch-icon" href="/assets/cheatstack-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <title>{title}</title>

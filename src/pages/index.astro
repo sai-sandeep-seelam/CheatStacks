@@ -44,6 +44,7 @@ const sortedCategories = Object.keys(categories).sort();
     </div>
   </div>
 
+
 <div class="grid gap-8" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
   {sortedCategories.map(category => (
     <div class="h-96 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg p-4 flex flex-col break-inside-avoid">
@@ -90,7 +91,7 @@ const sortedCategories = Object.keys(categories).sort();
       // Show up to 6 bookmarks
       const displayBookmarks = bookmarks.slice(0, 6);
 
-      displayBookmarks.forEach(bookmark => {
+      displayBookmarks.forEach((bookmark: any) => {
         const card = document.createElement('a');
         card.href = `/cheatsheets/${bookmark.slug}`;
         card.className = 'bg-white dark:bg-slate-800 rounded-lg shadow p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow block';
