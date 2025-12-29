@@ -28,24 +28,74 @@ const sortedCategories = Object.keys(categories).sort();
     </p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
-    {sortedCategories.map(category => (
-      <div class="break-inside-avoid">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4 flex items-center">
-            {category}
-            <span class="ml-auto text-xs font-normal text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{categories[category].length}</span>
-        </h2>
-        <ul class="space-y-1">
-          {categories[category].map(sheet => (
-            <li>
-              <a href={`/cheatsheets/${sheet.slug}`} class="group flex items-center justify-between px-3 py-2 -mx-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200">
-                <span class="text-slate-600 dark:text-slate-400 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate pr-4">{sheet.meta.title}</span>
-                <span class="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0">→</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
+  <!-- Bookmarks Section -->
+  <div id="bookmarks-section" class="max-w-4xl mx-auto mb-16 hidden">
+    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+      </svg>
+      Your Bookmarks
+    </h2>
+    <div id="bookmarks-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Bookmarks will be loaded here -->
+    </div>
+    <div class="mt-4 text-center">
+      <a href="/bookmarks" class="text-blue-600 hover:text-blue-500 dark:text-blue-400 text-sm">View all bookmarks →</a>
+    </div>
   </div>
+
+<div class="grid gap-8 overflow-x-hidden" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+  {sortedCategories.map(category => (
+    <div class="h-96 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-col break-inside-avoid overflow-x-hidden">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3 mb-4 flex items-center flex-shrink-0">
+        {category}
+        <span class="ml-auto text-xs font-normal text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{categories[category].length}</span>
+      </h2>
+      <ul class="space-y-1 overflow-y-auto flex-1">
+        {categories[category].map(sheet => (
+          <li>
+            <a href={`/cheatsheets/${sheet.slug}`} class="group flex items-center justify-between px-3 py-2 -mx-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200">
+              <span class="text-slate-600 dark:text-slate-400 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate pr-4">{sheet.meta.title}</span>
+              <span class="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>
 </Layout>
+
+<script>
+  function loadBookmarks() {
+    const bookmarks = JSON.parse(localStorage.getItem('cheatstack-bookmarks') || '[]');
+    const bookmarksSection = document.getElementById('bookmarks-section');
+    const bookmarksGrid = document.getElementById('bookmarks-grid');
+    
+    // Clear existing
+    bookmarksGrid.innerHTML = '';
+    
+    if (bookmarks.length > 0) {
+      bookmarksSection.classList.remove('hidden');
+      
+      // Show up to 6 bookmarks
+      const displayBookmarks = bookmarks.slice(0, 6);
+      
+      displayBookmarks.forEach(bookmark => {
+        const card = document.createElement('a');
+        card.href = `/cheatsheets/${bookmark.slug}`;
+        card.className = 'bg-white dark:bg-slate-800 rounded-lg shadow p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow block';
+        card.innerHTML = `
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-white">${bookmark.title}</h3>
+          ${bookmark.category ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${bookmark.category}</p>` : ''}
+        `;
+        bookmarksGrid.appendChild(card);
+      });
+    } else {
+      bookmarksSection.classList.add('hidden');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadBookmarks);
+  window.addEventListener('bookmarks-updated', loadBookmarks);
+</script>

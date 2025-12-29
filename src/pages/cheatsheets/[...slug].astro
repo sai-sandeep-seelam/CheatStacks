@@ -23,7 +23,7 @@ const highlighter = await getHighlighter();
 const renderer = new marked.Renderer();
 
 // Customizing code block rendering
-renderer.code = (token) => {
+renderer.code = function(token) {  // Changed from (token) => { ... } to function(token) { ... }
     try {
         // Handle new marked signature (object as first arg)
         let code = '';
@@ -35,7 +35,7 @@ renderer.code = (token) => {
         } else {
             // Fallback for older versions or unexpected calls
             code = token;
-            lang = arguments[1];
+            lang = arguments[1];  // Now accessible since it's a function
         }
 
         lang = lang || 'text';
@@ -60,13 +60,13 @@ renderer.code = (token) => {
                         Copy
                      </button>
                   </div>
-                  <div class="code-block-wrapper overflow-x-auto p-4 text-sm leading-relaxed">
+                  <div class="code-block-wrapper overflow-x-hidden p-4 text-sm leading-relaxed">
                     ${html}
                   </div>
                 </div>`;
     } catch (e) {
         // Fallback to plain text if highlighting fails
-        return `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto"><code>${token.text || token}</code></pre>`;
+        return `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-hidden"><code>${token.text || token}</code></pre>`;
     }
 };
 

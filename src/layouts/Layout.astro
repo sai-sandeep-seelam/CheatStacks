@@ -18,8 +18,12 @@ const { title = siteConfig.title, description = siteConfig.description } = Astro
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <title>{title}</title>
     <script is:inline>
       if (
@@ -33,16 +37,16 @@ const { title = siteConfig.title, description = siteConfig.description } = Astro
       }
     </script>
   </head>
-  <body class="bg-white dark:bg-slate-900 min-h-screen font-sans text-slate-900 dark:text-slate-100 antialiased selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-blue-900 dark:selection:text-blue-100">
+  <body class="bg-white dark:bg-slate-900 min-h-screen font-sans text-slate-900 dark:text-slate-100 antialiased selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-blue-900 dark:selection:text-blue-100 overflow-x-hidden">
     <Header />
     <div class="flex max-w-[90rem] mx-auto">
       <Sidebar />
-      <main class="flex-1 min-w-0">
+      <main class="flex-1 min-w-0 overflow-x-hidden">
         <div class="px-4 py-10 lg:px-8 lg:py-12 min-h-[calc(100vh-16rem)]">
             <slot />
         </div>
         <footer class="mt-12 py-8 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500 dark:text-slate-400 px-4">
-             <p>Cheatsheet content adapted from <a href="https://github.com/rstacruz/cheatsheets" target="_blank" rel="noopener noreferrer" class="underline hover:text-slate-700 dark:hover:text-slate-200">Devhints</a> (rstacruz/cheatsheets), licensed under MIT.</p>
+             <p><a href="/about" class="hover:text-slate-700 dark:hover:text-slate-200">About</a> | Cheatsheet content adapted from <a href="https://github.com/rstacruz/cheatsheets" target="_blank" rel="noopener noreferrer" class="underline hover:text-slate-700 dark:hover:text-slate-200">Devhints</a> (rstacruz/cheatsheets), licensed under MIT.</p>
              <p class="mt-2">&copy; {new Date().getFullYear()} {siteConfig.title}. Built with Astro & Tailwind.</p>
              <p class="mt-1"><a href="/ATTRIBUTION.md" class="hover:text-slate-700 dark:hover:text-slate-200">Attribution</a></p>
         </footer>
