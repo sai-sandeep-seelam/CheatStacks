@@ -1,0 +1,148 @@
+---
+
+---
+
+<div
+    id="splash-screen"
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-xl transition-opacity duration-700"
+>
+    <div class="relative perspective-1000">
+        <div class="anti-gravity-container">
+            <h1
+                class="text-6xl md:text-9xl font-black tracking-tighter select-none logo-text"
+            >
+                CHEATSTACK
+            </h1>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 3D Container for the floating effect */
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+
+    .anti-gravity-container {
+        animation:
+            float 6s ease-in-out infinite,
+            drift 8s ease-in-out infinite alternate,
+            rotate 10s ease-in-out infinite alternate;
+        transform-style: preserve-3d;
+    }
+
+    /* Liquid Typography Styling */
+    .logo-text {
+        color: rgba(96, 165, 250, 0.1); /* Faint blue outline base */
+        -webkit-text-stroke: 1px rgba(96, 165, 250, 0.5);
+        position: relative;
+        background-clip: text;
+        -webkit-background-clip: text;
+
+        /* Variable for the fill level */
+        --fill-level: 50%;
+
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%233b82f6' fill-opacity='1' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E"),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2360a5fa' fill-opacity='0.5' d='M0,160L48,176C96,192,192,224,288,224C384,224,480,192,576,165.3C672,139,768,117,864,128C960,139,1056,181,1152,197.3C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+
+        background-repeat: repeat-x;
+        background-position:
+            0 130%,
+            -50% 130%; /* Start below text */
+        background-size:
+            100% 200%,
+            100% 200%;
+
+        text-shadow:
+            0 0 20px rgba(96, 165, 250, 0.2),
+            0 0 40px rgba(96, 165, 250, 0.1);
+
+        animation: liquid-fill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes liquid-fill {
+        0% {
+            color: rgba(96, 165, 250, 0.1);
+            background-position:
+                0 150%,
+                0 150%;
+        }
+        50% {
+            /* Wavy movement while filling */
+            background-position:
+                100% 50%,
+                -50% 60%;
+        }
+        100% {
+            color: rgba(96, 165, 250, 0); /* Text clear, background fills */
+            background-position:
+                200% 10%,
+                -100% 15%; /* Nearly filled */
+            /* Make outline disappear or blend */
+        }
+    }
+
+    /* Keep existing float animations */
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    @keyframes drift {
+        0% {
+            transform: translateX(-10px);
+        }
+        100% {
+            transform: translateX(10px);
+        }
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate3d(1, 1, 0, 5deg);
+        }
+        100% {
+            transform: rotate3d(1, 1, 0, -5deg);
+        }
+    }
+
+    /* Fade Out Class */
+    .fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    // Hide splash screen after delay, but only show it once per session
+    document.addEventListener("DOMContentLoaded", () => {
+        const splash = document.getElementById("splash-screen");
+
+        if (splash) {
+            // Check if splash has already been shown in this session
+            const hasShown = sessionStorage.getItem("splashShown");
+
+            if (hasShown) {
+                // If shown, remove immediately (no animation)
+                splash.style.display = "none";
+                splash.remove();
+            } else {
+                // If not shown, play animation and set flag
+                sessionStorage.setItem("splashShown", "true");
+
+                setTimeout(() => {
+                    splash.classList.add("fade-out");
+                    setTimeout(() => {
+                        splash.remove();
+                    }, 700); // Wait for transition to finish
+                }, 2500); // Display time
+            }
+        }
+    });
+</script>

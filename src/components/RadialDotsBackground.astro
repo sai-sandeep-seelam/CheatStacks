@@ -1,0 +1,150 @@
+---
+
+---
+
+<canvas
+    id="radial-dots"
+    class="fixed inset-0 -z-10 w-full h-full pointer-events-none"></canvas>
+
+<script>
+    // Configuration
+    const DOT_SPACING = 24; // Tighter grid for "UI" feel
+    const DOT_RADIUS = 1;
+    const MASK_RADIUS = 300; // Radial highlight size
+
+    class RadialDots {
+        canvas: HTMLCanvasElement;
+        ctx: CanvasRenderingContext2D;
+        width: number;
+        height: number;
+        dots: { x: number; y: number }[]; // Static dots, no velocity needed
+        mouse: { x: number; y: number };
+        isDarkMode: boolean;
+
+        constructor() {
+            this.canvas = document.getElementById(
+                "radial-dots",
+            ) as HTMLCanvasElement;
+            this.ctx = this.canvas.getContext("2d")!;
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.dots = [];
+            this.mouse = { x: -1000, y: -1000 };
+            this.isDarkMode =
+                document.documentElement.classList.contains("dark");
+
+            this.init();
+            this.observeTheme();
+        }
+
+        init() {
+            this.resize();
+            this.createDots();
+            this.bindEvents();
+            this.animate();
+        }
+
+        resize() {
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+            this.canvas.style.width = `${this.width}px`;
+            this.canvas.style.height = `${this.height}px`;
+            this.createDots();
+        }
+
+        createDots() {
+            this.dots = [];
+            const cols = Math.ceil(this.width / DOT_SPACING);
+            const rows = Math.ceil(this.height / DOT_SPACING);
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    this.dots.push({
+                        x: j * DOT_SPACING + DOT_SPACING / 2,
+                        y: i * DOT_SPACING + DOT_SPACING / 2,
+                    });
+                }
+            }
+        }
+
+        bindEvents() {
+            window.addEventListener("resize", () => this.resize());
+
+            document.addEventListener("mousemove", (e) => {
+                this.mouse.x = e.clientX;
+                this.mouse.y = e.clientY;
+            });
+
+            document.addEventListener("mouseleave", () => {
+                this.mouse.x = -1000;
+                this.mouse.y = -1000;
+            });
+        }
+
+        observeTheme() {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === "class") {
+                        this.isDarkMode =
+                            document.documentElement.classList.contains("dark");
+                    }
+                });
+            });
+            observer.observe(document.documentElement, { attributes: true });
+        }
+
+        draw() {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+
+            // Theme Configuration
+            // Dark Mode matches #0F172B (Slate 900)
+            // Light Mode matches White
+            const baseColorRGB = this.isDarkMode
+                ? "51, 65, 85"
+                : "203, 213, 225"; // Slate-700 / Slate-300
+            const glowColorRGB = this.isDarkMode
+                ? "56, 189, 248"
+                : "99, 102, 241"; // Sky-400 / Indigo-500
+
+            this.dots.forEach((dot) => {
+                const dx = this.mouse.x - dot.x;
+                const dy = this.mouse.y - dot.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Opacity Logic
+                // Base: Very subtle
+                // Highlight: Brighter near mouse
+                let alpha = this.isDarkMode ? 0.1 : 0.2;
+                let isHighlight = false;
+
+                if (dist < MASK_RADIUS) {
+                    const intensity = 1 - Math.pow(dist / MASK_RADIUS, 1.5);
+                    alpha += intensity * 0.5;
+                    isHighlight = true;
+                }
+
+                this.ctx.beginPath();
+
+                if (isHighlight && dist < MASK_RADIUS) {
+                    this.ctx.fillStyle = `rgba(${glowColorRGB}, ${Math.min(alpha, 1)})`;
+                } else {
+                    this.ctx.fillStyle = `rgba(${baseColorRGB}, ${Math.min(alpha, 1)})`;
+                }
+
+                this.ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+        }
+
+        animate() {
+            this.draw();
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        new RadialDots();
+    });
+</script>
