@@ -15,23 +15,35 @@ const categories = cheatsheets.reduce((acc, sheet) => {
 const sortedCategories = Object.keys(categories).sort();
 ---
 
-<aside id="sidebar" class="fixed top-16 bottom-0 left-0 z-40 w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-800 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col lg:static lg:h-screen lg:sticky lg:top-16">
+<aside id="sidebar" class="fixed top-16 bottom-0 left-0 z-40 w-80 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-r border-indigo-200/50 dark:border-slate-700/50 transform -translate-x-full lg:translate-x-0 transition-all duration-500 ease-in-out flex flex-col lg:static lg:h-screen lg:sticky lg:top-16 shadow-2xl backdrop-blur-sm">
   <!-- Sticky mobile search section -->
-  <div class="lg:hidden sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 p-4">
+  <div class="lg:hidden sticky top-0 z-10 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 dark:from-slate-800 dark:to-slate-700 border-b border-indigo-200/30 dark:border-slate-600/30 p-4 backdrop-blur-md">
     <SearchBar />
   </div>
 
   <!-- Scrollable content section -->
-  <div class="flex-1 overflow-y-auto p-4 lg:p-6 min-h-0">
-    <nav class="space-y-8">
-      {sortedCategories.map(category => (
-        <div>
-          <h3 class="font-bold text-sm uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3 px-2">{category}</h3>
-          <ul class="space-y-0.5">
-            {categories[category].map(sheet => (
-              <li>
-                <a href={`/cheatsheets/${sheet.slug}`} class="block px-2 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-md transition-colors truncate">
-                  {sheet.meta.title}
+  <div class="flex-1 overflow-y-auto p-6 min-h-0 animate-fade-in custom-scrollbar">
+    <nav class="space-y-10">
+      {sortedCategories.map((category, index) => (
+        <div class={`animate-slide-up stagger-${index % 3} group`}>
+          <div class="flex items-center gap-3 mb-4 px-3">
+            <div class="w-1 h-6 bg-gradient-to-b from-indigo-500 to-cyan-500 rounded-full opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <h3 class="font-bold text-base uppercase tracking-wider text-slate-800 dark:text-slate-100 font-inter bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
+              {category}
+            </h3>
+            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
+              {categories[category].length}
+            </span>
+          </div>
+          <ul class="space-y-2 ml-6">
+            {categories[category].map((sheet, itemIndex) => (
+              <li class={`animate-slide-in-right stagger-item-${itemIndex % 5}`}>
+                <a href={`/cheatsheets/${sheet.slug}`} class="group/link flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-cyan-400 bg-white/60 dark:bg-slate-800/60 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-cyan-50 dark:hover:from-slate-700 dark:hover:to-slate-600 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/10 border border-transparent hover:border-indigo-200/50 dark:hover:border-slate-600/50 backdrop-blur-sm font-inter">
+                  <div class="w-2 h-2 bg-gradient-to-r from-indigo-400 to-cyan-400 rounded-full opacity-60 group-hover/link:opacity-100 transition-opacity duration-300"></div>
+                  <span class="truncate">{sheet.meta.title}</span>
+                  <svg class="w-4 h-4 ml-auto text-slate-400 group-hover/link:text-indigo-500 dark:group-hover/link:text-cyan-400 transition-all duration-300 opacity-0 group-hover/link:opacity-100 transform translate-x-2 group-hover/link:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
                 </a>
               </li>
             ))}
@@ -42,37 +54,170 @@ const sortedCategories = Object.keys(categories).sort();
   </div>
 
   <!-- Fixed mobile footer: Login/Profile -->
-  <div class="lg:hidden border-t border-gray-200 dark:border-gray-800 p-3 bg-white dark:bg-slate-900">
+  <div class="lg:hidden border-t border-indigo-200/30 dark:border-slate-600/30 p-4 bg-gradient-to-r from-indigo-50/80 to-cyan-50/80 dark:from-slate-800 dark:to-slate-700 backdrop-blur-md">
     <!-- Login button (shown when not logged in) -->
-    <a id="mobile-login-link" href="/login" class="block px-3 py-1.5 text-sm font-medium text-center text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 rounded-md transition-colors">Login</a>
+    <a id="mobile-login-link" href="/login" class="block px-4 py-3 text-sm font-semibold text-center text-white bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25 font-inter">
+      <span class="flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+        </svg>
+        Login
+      </span>
+    </a>
     
     <!-- Profile section (shown when logged in) -->
     <div id="mobile-profile-section" class="hidden">
-      <button id="mobile-profile-trigger" class="w-full flex items-center gap-2 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors">
-        <img id="mobile-profile-img" src="" alt="Profile" class="w-7 h-7 rounded-full hidden">
-        <div id="mobile-profile-icon" class="w-7 h-7 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center text-slate-700 dark:text-slate-300 hidden flex-shrink-0">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+      <button id="mobile-profile-trigger" class="w-full flex items-center gap-3 p-3 hover:bg-gradient-to-r hover:from-indigo-100/50 hover:to-cyan-100/50 dark:hover:from-slate-700 dark:hover:to-slate-600 rounded-xl transition-all duration-300 hover:scale-[1.02] border border-indigo-200/30 dark:border-slate-600/30 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+        <img id="mobile-profile-img" src="" alt="Profile" class="w-8 h-8 rounded-full border-2 border-indigo-200 dark:border-slate-600 hidden">
+        <div id="mobile-profile-icon" class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-cyan-500 flex items-center justify-center text-white hidden flex-shrink-0 shadow-lg">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
           </svg>
         </div>
         <div class="flex-1 text-left">
-          <p id="mobile-username" class="text-xs font-medium text-slate-900 dark:text-white truncate">User</p>
+          <p id="mobile-username" class="text-sm font-semibold text-slate-800 dark:text-white font-inter truncate">User</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">View Profile</p>
         </div>
-        <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform duration-300 group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
       </button>
       
-      <div id="mobile-profile-menu" class="hidden mt-1.5 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700">
-        <a href="/profile" class="block px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-t-md">Change Profile</a>
-        <a href="/account" class="block px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Account Info</a>
-        <button id="mobile-logout-btn" class="w-full text-left px-2.5 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-b-md">Logout</button>
+      <div id="mobile-profile-menu" class="hidden mt-2 bg-white/95 dark:bg-slate-800/95 rounded-xl border border-indigo-200/50 dark:border-slate-600/50 transition-all duration-300 ease-out opacity-0 scale-95 transform shadow-xl backdrop-blur-md">
+        <a href="/profile" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-cyan-50 dark:hover:from-slate-700 dark:hover:to-slate-600 rounded-t-xl transition-all duration-200 font-inter">
+          <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+          Change Profile
+        </a>
+        <a href="/account" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-cyan-50 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-200 font-inter">
+          <svg class="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          Account Info
+        </a>
+        <button id="mobile-logout-btn" class="w-full flex items-center gap-3 text-left px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/20 dark:hover:to-pink-900/20 rounded-b-xl transition-all duration-200 font-inter">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          Logout
+        </button>
       </div>
     </div>
   </div>
 </aside>
 
-<div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  .font-inter {
+    font-family: 'Inter', 'system-ui', '-apple-system', sans-serif;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.6), rgba(6, 182, 212, 0.6));
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.8), rgba(6, 182, 212, 0.8));
+  }
+
+  /* Stagger delays */
+  .stagger-0 { animation-delay: 0.1s; }
+  .stagger-1 { animation-delay: 0.2s; }
+  .stagger-2 { animation-delay: 0.3s; }
+
+  .stagger-item-0 { animation-delay: 0.1s; }
+  .stagger-item-1 { animation-delay: 0.15s; }
+  .stagger-item-2 { animation-delay: 0.2s; }
+  .stagger-item-3 { animation-delay: 0.25s; }
+  .stagger-item-4 { animation-delay: 0.3s; }
+
+  /* Glass morphism effect */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+  }
+</style>
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm transition-all duration-500"></div>
 
 <script>
     const sidebar = document.getElementById('sidebar');
@@ -128,14 +273,32 @@ const sortedCategories = Object.keys(categories).sort();
 
     // Toggle mobile profile dropdown
     mobileProfileTrigger?.addEventListener('click', function() {
-      mobileProfileMenu?.classList.toggle('hidden');
+      const isHidden = mobileProfileMenu?.classList.contains('hidden');
+      if (isHidden) {
+        mobileProfileMenu?.classList.remove('hidden');
+        // Trigger animation
+        setTimeout(() => {
+          mobileProfileMenu?.classList.remove('opacity-0', 'scale-95');
+          mobileProfileMenu?.classList.add('opacity-100', 'scale-100');
+        }, 10);
+      } else {
+        mobileProfileMenu?.classList.add('opacity-0', 'scale-95');
+        mobileProfileMenu?.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+          mobileProfileMenu?.classList.add('hidden');
+        }, 300);
+      }
     });
 
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
       const target = e.target as HTMLElement;
-      if (mobileProfileSection && !mobileProfileSection.contains(target)) {
-        mobileProfileMenu?.classList.add('hidden');
+      if (mobileProfileSection && !mobileProfileSection.contains(target) && !mobileProfileMenu?.classList.contains('hidden')) {
+        mobileProfileMenu?.classList.add('opacity-0', 'scale-95');
+        mobileProfileMenu?.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+          mobileProfileMenu?.classList.add('hidden');
+        }, 300);
       }
     });
 

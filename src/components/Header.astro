@@ -11,13 +11,13 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
       <div class="relative flex items-center justify-between">
         
         <div class="flex items-center">
-            <button type="button" class="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 mr-2" id="menu-button" aria-label="Open sidebar" aria-expanded="false">
-                <Menu class="w-6 h-6" />
+            <button type="button" class="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 mr-2 transition-all duration-300 hover:scale-110 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" id="menu-button" aria-label="Open sidebar" aria-expanded="false">
+                <Menu class="w-6 h-6 transition-transform duration-300" />
             </button>
             
-            <a class="flex items-center gap-2 mr-4" href="/">
-              <img src="/cheatstack-icon.png" alt="CheatStack Logo" class="w-10 h-10 rounded-lg">
-              <span class="font-bold text-xl text-slate-900 dark:text-white tracking-tight">{siteConfig.title}</span>
+            <a class="flex items-center gap-2 mr-4 group" href="/">
+              <img src="/cheatstack-icon.png" alt="CheatStack Logo" class="w-10 h-10 rounded-lg transition-transform duration-300 group-hover:scale-110">
+              <span class="font-bold text-xl text-slate-900 dark:text-white tracking-tight transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">{siteConfig.title}</span>
             </a>
         </div>
 
@@ -28,8 +28,8 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
         <div class="flex items-center gap-4">
             <nav class="text-sm font-semibold text-slate-700 dark:text-slate-200 hidden lg:block">
                 <ul class="flex items-center space-x-6">
-                    <li id="bookmarks-link" class="hidden"><a href="/bookmarks" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1 py-1"><Bookmark class="w-4 h-4" /> Bookmarks</a></li>
-                    <li id="login-link"><a href="/login" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Login</a></li>
+                    <li id="bookmarks-link" class="hidden"><a href="/bookmarks" class="hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 flex items-center gap-1 py-1 hover:scale-105"><Bookmark class="w-4 h-4" /> Bookmarks</a></li>
+                    <li id="login-link"><a href="/login" class="hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 hover:scale-105">Login</a></li>
                     <li id="profile-link" class="hidden relative">
                         <div class="flex items-center space-x-2 cursor-pointer" id="profile-trigger">
                             <img id="profile-img" src="" alt="Profile" class="w-8 h-8 rounded-full hidden">
@@ -51,11 +51,11 @@ import { Menu, Github, Bookmark } from 'lucide-astro';
             </nav>
             
             <div class="flex items-center border-l border-slate-200 ml-2 pl-4 dark:border-slate-800 gap-2 h-10">
-                <button id="mobile-bookmark-btn" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors" aria-label="Bookmarks">
+                <button id="mobile-bookmark-btn" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-300 hover:scale-110" aria-label="Bookmarks">
                     <Bookmark class="w-5 h-5" />
                 </button>
                 <ThemeToggle />
-                <a href={siteConfig.github} class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <a href={siteConfig.github} class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all duration-300 hover:scale-110" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                     <Github class="w-5 h-5" />
                 </a>
             </div>

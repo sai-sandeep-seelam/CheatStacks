@@ -1,6 +1,30 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  /* Remap all Gray to Orange */
+  --color-gray-50: var(--color-orange-50);
+  --color-gray-100: var(--color-orange-100);
+  --color-gray-200: var(--color-orange-200);
+  --color-gray-300: var(--color-orange-300);
+  --color-gray-400: var(--color-orange-400);
+  --color-gray-500: var(--color-orange-500);
+  --color-gray-600: var(--color-orange-600);
+  --color-gray-700: var(--color-orange-700);
+  --color-gray-800: var(--color-orange-800);
+  --color-gray-900: var(--color-orange-900);
+  --color-gray-950: var(--color-orange-950);
+
+  /* Remap lighter Slate (used for text) to Orange */
+  /* Keeping dark Slate (600+) for backgrounds */
+  --color-slate-50: var(--color-orange-50);
+  --color-slate-100: var(--color-orange-100);
+  --color-slate-200: var(--color-orange-200);
+  --color-slate-300: var(--color-orange-300);
+  --color-slate-400: var(--color-orange-400);
+  --color-slate-500: var(--color-orange-500);
+}
+
 /* Force dark mode to use class strategy */
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,7 +32,7 @@
   .scrollbar-thin {
     scrollbar-width: thin;
   }
-  
+
   .scrollbar-thumb-gray-300 {
     scrollbar-color: #d1d5db transparent;
   }
@@ -26,22 +50,98 @@
   body {
     @apply antialiased;
   }
+
+  /* Make <em> tags (citations like (docs.anthropic.com)) Blue */
+  em {
+    @apply text-blue-400 not-italic;
+    color: var(--color-blue-400);
+  }
+
+  /* Override Prose colors for Dark Mode */
+  .dark .prose,
+  .prose.dark {
+    /* Main Content - Neutral (Zinc/White) for Readability */
+    --tw-prose-body: #e4e4e7;
+    /* zinc-200 */
+    --tw-prose-bold: #fff;
+    --tw-prose-code: #e4e4e7;
+    --tw-prose-pre-code: #e4e4e7;
+    --tw-prose-bullets: #d4d4d8;
+    /* zinc-300 */
+    --tw-prose-captions: #a1a1aa;
+    /* zinc-400 */
+    --tw-prose-counters: #a1a1aa;
+
+    /* Theme Highlights - Orange */
+    --tw-prose-headings: var(--color-orange-100);
+    --tw-prose-lead: var(--color-orange-300);
+    --tw-prose-hr: var(--color-orange-800);
+    --tw-prose-quotes: var(--color-orange-100);
+    --tw-prose-quote-borders: var(--color-orange-700);
+    --tw-prose-pre-bg: #1e293b;
+    --tw-prose-th-borders: var(--color-orange-700);
+    --tw-prose-td-borders: var(--color-orange-800);
+
+    /* Links - Blue */
+    --tw-prose-links: var(--color-blue-400);
+    --tw-prose-invert-links: var(--color-blue-400);
+
+    /* Invert variables */
+    --tw-prose-invert-body: #e4e4e7;
+    --tw-prose-invert-bold: #fff;
+    --tw-prose-invert-code: #e4e4e7;
+    --tw-prose-invert-pre-code: #e4e4e7;
+    --tw-prose-invert-bullets: #d4d4d8;
+    --tw-prose-invert-captions: #a1a1aa;
+    --tw-prose-invert-counters: #a1a1aa;
+
+    --tw-prose-invert-headings: var(--color-orange-100);
+    --tw-prose-invert-lead: var(--color-orange-300);
+    --tw-prose-invert-hr: var(--color-orange-800);
+    --tw-prose-invert-quotes: var(--color-orange-100);
+    --tw-prose-invert-quote-borders: var(--color-orange-700);
+    --tw-prose-invert-pre-bg: #1e293b;
+    --tw-prose-invert-th-borders: var(--color-orange-700);
+    --tw-prose-invert-td-borders: var(--color-orange-800);
+
+    /* Table Column Specifics for Description (2nd Column) */
+    th:nth-child(2) {
+      @apply text-blue-600;
+      /* Dark Blue for Header */
+      color: var(--color-blue-600);
+    }
+
+    td:nth-child(2) {
+      @apply text-blue-400;
+      /* Lighter Blue for Rows */
+      color: var(--color-blue-400);
+    }
+
+    /* Ensure selection specificity overrides general prose styles */
+    :where(thead th:nth-child(2)) {
+      color: var(--color-blue-600);
+    }
+
+    :where(tbody td:nth-child(2)) {
+      color: var(--color-blue-400);
+    }
+  }
 }
 
 /* Custom scrollbar for Webkit */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent; 
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-600;
+  @apply bg-gray-400 dark:bg-gray-600;
 }

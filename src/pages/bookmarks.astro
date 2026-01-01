@@ -6,17 +6,51 @@ const title = `Bookmarks - ${siteConfig.title}`;
 const description = 'Your saved cheatsheet bookmarks.';
 ---
 
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../config/site';
+
+const title = `Bookmarks - ${siteConfig.title}`;
+const description = 'Your saved cheatsheet bookmarks.';
+---
+
 <Layout title={title} description={description}>
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-center text-slate-900 dark:text-white mb-8">Your Bookmarks</h1>
-    
-    <div id="bookmarks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Hero Section with Gradient Background -->
+  <div class="relative overflow-hidden mb-12">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 opacity-30"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/3 via-purple-500/3 to-pink-500/3"></div>
+
+    <div class="relative max-w-4xl mx-auto px-4 py-12 text-center animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6 font-inter">
+        <span class="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">Your Bookmarks</span>
+      </h1>
+      <p class="text-xl text-slate-600 dark:text-violet-400 leading-relaxed font-inter animate-slide-up">
+        Your saved cheatsheet collection
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-4xl mx-auto px-4 pb-12">
+    <div id="bookmarks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
       <!-- Bookmarks will be loaded here -->
     </div>
-    
-    <div id="no-bookmarks" class="text-center text-slate-600 dark:text-slate-400 mt-8 hidden">
-      <p>You haven't bookmarked any cheatsheets yet.</p>
-      <p class="mt-2">Browse cheatsheets and click the bookmark icon to save them here.</p>
+
+    <div id="no-bookmarks" class="text-center glass p-12 rounded-xl shadow-xl animate-fade-in hidden">
+      <div class="max-w-md mx-auto">
+        <svg class="w-16 h-16 text-slate-400 dark:text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+        </svg>
+        <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2 font-inter">No bookmarks yet</h3>
+        <p class="text-slate-600 dark:text-red-400 mb-6 font-inter">You haven't bookmarked any cheatsheets yet.</p>
+        <p class="text-slate-500 dark:text-slate-500 font-inter">Browse cheatsheets and click the bookmark icon to save them here.</p>
+        <a href="/" class="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg hover:from-indigo-700 hover:to-cyan-700 transition-all duration-200 hover:scale-105 hover:shadow-lg font-inter font-medium">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          Browse Cheatsheets
+        </a>
+      </div>
     </div>
   </div>
 </Layout>
@@ -26,27 +60,124 @@ const description = 'Your saved cheatsheet bookmarks.';
     const bookmarks = JSON.parse(localStorage.getItem('cheatstack-bookmarks') || '[]');
     const bookmarksList = document.getElementById('bookmarks-list');
     const noBookmarks = document.getElementById('no-bookmarks');
-    
+
     if (bookmarks.length === 0) {
       noBookmarks.classList.remove('hidden');
       return;
     }
-    
-    // Display bookmarks
-    bookmarks.forEach(bookmark => {
+
+    // Display bookmarks with enhanced styling
+    bookmarks.forEach((bookmark, index) => {
       const card = document.createElement('div');
-      card.className = 'bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow';
+      card.className = `bg-gradient-to-br from-white to-slate-50 dark:from-slate-800/80 dark:to-slate-700/80 rounded-xl shadow-lg p-6 border border-slate-200/50 dark:border-slate-700/50 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 glass animate-slide-up stagger-${index % 3}`;
+      card.style.animationDelay = `${index * 0.1}s`;
       card.innerHTML = `
-        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">${bookmark.title}</h3>
-        ${bookmark.category ? `<p class="text-sm text-slate-500 dark:text-slate-400 mb-2">${bookmark.category}</p>` : ''}
-        <a href="/cheatsheets/${bookmark.slug}" class="text-blue-600 hover:text-blue-500 dark:text-blue-400 inline-flex items-center gap-1">
-          View Cheatsheet
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2 font-inter line-clamp-2">${bookmark.title}</h3>
+            ${bookmark.category ? `<p class="text-sm text-slate-500 dark:text-pink-500 mb-3 font-inter flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+              </svg>
+              ${bookmark.category}
+            </p>` : ''}
+          </div>
+          <button class="remove-bookmark text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20" data-slug="${bookmark.slug}">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <a href="/cheatsheets/${bookmark.slug}" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-lg hover:from-indigo-700 hover:to-cyan-700 transition-all duration-200 hover:scale-105 hover:shadow-lg font-inter font-medium text-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
+          View Cheatsheet
         </a>
       `;
       bookmarksList.appendChild(card);
+
+      // Add remove bookmark functionality
+      const removeBtn = card.querySelector('.remove-bookmark');
+      removeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const slug = this.getAttribute('data-slug');
+        const updatedBookmarks = bookmarks.filter(b => b.slug !== slug);
+        localStorage.setItem('cheatstack-bookmarks', JSON.stringify(updatedBookmarks));
+
+        card.style.transform = 'scale(0.95)';
+        card.style.opacity = '0';
+        setTimeout(() => {
+          card.remove();
+          if (updatedBookmarks.length === 0) {
+            noBookmarks.classList.remove('hidden');
+          }
+          // Dispatch event to update other components
+          window.dispatchEvent(new Event('bookmarks-updated'));
+        }, 200);
+      });
     });
+  });
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  .font-inter {
+    font-family: 'Inter', 'system-ui', '-apple-system', sans-serif;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* Stagger delays */
+  .stagger-0 { animation-delay: 0.1s; }
+  .stagger-1 { animation-delay: 0.2s; }
+  .stagger-2 { animation-delay: 0.3s; }
+
+  /* Glass morphism effect */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
+
+  .dark .glass {
+    background-color: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+  }
+
+  /* Line clamp utility */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
   });
 </script>

@@ -2,30 +2,62 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
+---
+import Layout from '../layouts/Layout.astro';
+---
+
 <Layout title="Contribute - CheatStack">
-  <div class="max-w-3xl mx-auto prose prose-slate dark:prose-invert">
-    <h1>Contribute to CheatStack</h1>
-    <p class="lead">
-      We welcome contributions! CheatStack is designed to be easy to contribute to. 
-      Whether you want to add a new cheatsheet or improve an existing one, here is how.
-    </p>
+  <!-- Hero Section with Gradient Background -->
+  <div class="relative overflow-hidden mb-12">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 opacity-30"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/3 via-purple-500/3 to-pink-500/3"></div>
 
-    <h2>Project Structure</h2>
-    <p>
-        Each cheatsheet lives in its own folder under <code>src/content/cheatsheets/</code>.
-        The folder name becomes the URL slug.
-    </p>
+    <div class="relative max-w-3xl mx-auto px-4 py-12 text-center animate-fade-in">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6 font-inter">
+        <span class="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">Contribute to CheatStack</span>
+      </h1>
+      <p class="text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-inter animate-slide-up">
+        Help us build the ultimate developer cheatsheet collection
+      </p>
+    </div>
+  </div>
 
-    <h2>How to add a cheatsheet</h2>
-    <ol>
-      <li>Fork the repository.</li>
-      <li>Create a new folder in <code>src/content/cheatsheets/</code> with your topic name (e.g., <code>my-topic</code>).</li>
-      <li>Add an <code>index.md</code> file with the content using Markdown.</li>
-      <li>Add a <code>meta.json</code> file with metadata.</li>
-    </ol>
+  <!-- Main Content with Enhanced Styling -->
+  <div class="max-w-3xl mx-auto px-4 pb-12">
+    <article class="prose prose-slate dark:prose-invert max-w-none glass p-8 rounded-xl shadow-xl animate-fade-in
+        prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-900 dark:prose-headings:text-red-400 prose-headings:font-inter
+        prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-6 prose-h1:border-b prose-h1:border-slate-200 dark:prose-h1:border-slate-600 prose-h1:pb-3 prose-h1:text-indigo-600 dark:prose-h1:text-red-400
+        prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:border-slate-200 dark:prose-h2:border-slate-600 prose-h2:pb-2 prose-h2:text-slate-800 dark:prose-h2:text-red-400
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-slate-700 dark:prose-h3:text-red-400
+        prose-p:leading-7 prose-p:text-slate-600 dark:prose-p:text-violet-400 prose-p:font-inter
+        prose-code:text-pink-600 dark:prose-code:text-pink-500 prose-code:bg-pink-50 dark:prose-code:bg-pink-500/20 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-mono prose-code:text-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-code:transition-colors prose-code:duration-200
+        prose-pre:bg-gradient-to-br prose-pre:from-slate-50 prose-pre:to-white prose-pre:dark:from-slate-800/80 prose-pre:dark:to-slate-700/80 prose-pre:border prose-pre:border-slate-200/50 prose-pre:dark:border-slate-700/50 prose-pre:rounded-lg prose-pre:backdrop-blur-sm prose-pre:shadow-sm
+        prose-strong:text-slate-900 dark:prose-strong:text-pink-500 prose-strong:font-inter prose-strong:text-indigo-600 dark:prose-strong:text-pink-500
+        prose-a:text-indigo-600 dark:prose-a:text-red-400 prose-a:no-underline hover:prose-a:underline prose-a:transition-colors prose-a:duration-200
+        prose-li:marker:text-slate-400 dark:prose-li:marker:text-slate-400 prose-li:font-inter
+        prose-ul:space-y-2 prose-ol:space-y-2
+        prose-lead:text-lg prose-lead:font-medium prose-lead:text-slate-700 dark:prose-lead:text-violet-400">
+      <p class="lead">
+        We welcome contributions! CheatStack is designed to be easy to contribute to.
+        Whether you want to add a new cheatsheet or improve an existing one, here is how.
+      </p>
 
-    <h3>meta.json example</h3>
-    <pre><code class="language-json">&#123;
+      <h2>Project Structure</h2>
+      <p>
+          Each cheatsheet lives in its own folder under <code>src/content/cheatsheets/</code>.
+          The folder name becomes the URL slug.
+      </p>
+
+      <h2>How to add a cheatsheet</h2>
+      <ol>
+        <li>Fork the repository.</li>
+        <li>Create a new folder in <code>src/content/cheatsheets/</code> with your topic name (e.g., <code>my-topic</code>).</li>
+        <li>Add an <code>index.md</code> file with the content using Markdown.</li>
+        <li>Add a <code>meta.json</code> file with metadata.</li>
+      </ol>
+
+      <h3>meta.json example</h3>
+      <pre><code class="language-json">&#123;
   "title": "My Topic",
   "tags": ["web", "tool"],
   "category": "Tools",
@@ -33,16 +65,91 @@ import Layout from '../layouts/Layout.astro';
   "source": "Self"
 &#125;</code></pre>
 
-    <h2>Guidelines</h2>
-    <ul>
-        <li>Use H2 (<code>##</code>) for section headers.</li>
-        <li>Use H3 (<code>###</code>) for subsections.</li>
-        <li>Code blocks should specify the language for highlighting.</li>
-        <li>Keep it concise. It's a cheatsheet, not a tutorial.</li>
-    </ul>
+      <h2>Guidelines</h2>
+      <ul>
+          <li>Use H2 (<code>##</code>) for section headers.</li>
+          <li>Use H3 (<code>###</code>) for subsections.</li>
+          <li>Code blocks should specify the language for highlighting.</li>
+          <li>Keep it concise. It's a cheatsheet, not a tutorial.</li>
+      </ul>
 
-    <p>
-      Submit a Pull Request and we will review it!
-    </p>
+      <p>
+        Submit a Pull Request and we will review it!
+      </p>
+    </article>
   </div>
 </Layout>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  .font-inter {
+    font-family: 'Inter', 'system-ui', '-apple-system', sans-serif;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
+
+  .dark .glass {
+    background-color: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+  }
+
+  /* Enhanced prose styling */
+  .prose blockquote {
+    position: relative;
+  }
+
+  .prose blockquote::before {
+    content: '"';
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    font-size: 4rem;
+    color: rgba(99, 102, 241, 0.1);
+    font-family: 'Inter', serif;
+    line-height: 1;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  .prose a, .prose code, .prose strong {
+    transition: all 0.2s ease;
+  }
+
+  .prose a:hover {
+    color: rgb(99, 102, 241);
+  }
+
+  .dark .prose a:hover {
+    color: rgb(6, 182, 212);
+  }
+</style>
