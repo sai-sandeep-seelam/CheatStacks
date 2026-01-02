@@ -17,6 +17,17 @@
     </div>
 </div>
 
+<script is:inline>
+    try {
+        if (sessionStorage.getItem("splashShown")) {
+            const splash = document.getElementById("splash-screen");
+            if (splash) splash.style.display = "none";
+        }
+    } catch (e) {
+        console.log("Splash screen check failed");
+    }
+</script>
+
 <style>
     /* 3D Container for the floating effect */
     .perspective-1000 {
