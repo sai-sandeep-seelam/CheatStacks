@@ -17,15 +17,20 @@
         ctx: CanvasRenderingContext2D;
         width: number;
         height: number;
-        dots: { x: number; y: number }[]; // Static dots, no velocity needed
+        dots: { x: number; y: number }[];
         mouse: { x: number; y: number };
         isDarkMode: boolean;
+        isMobile: boolean;
+        animationFrameId: number | null = null;
 
         constructor() {
             this.canvas = document.getElementById(
                 "radial-dots",
             ) as HTMLCanvasElement;
-            this.ctx = this.canvas.getContext("2d")!;
+            const context = this.canvas.getContext("2d");
+            if (!context) throw new Error("Could not get canvas context");
+            this.ctx = context;
+
             this.width = window.innerWidth;
             this.height = window.innerHeight;
             this.dots = [];
@@ -33,29 +38,47 @@
             this.isDarkMode =
                 document.documentElement.classList.contains("dark");
 
+            // Detect mobile/touch devices to disable heavy hover animations
+            this.isMobile = window.matchMedia(
+                "(hover: none) and (pointer: coarse)",
+            ).matches;
+
             this.init();
             this.observeTheme();
         }
 
         init() {
             this.resize();
-            this.createDots();
             this.bindEvents();
-            this.animate();
+
+            if (!this.isMobile) {
+                this.animate();
+            } else {
+                // Render once for mobile
+                this.draw();
+            }
         }
 
         resize() {
             this.width = window.innerWidth;
             this.height = window.innerHeight;
-            this.canvas.width = this.width;
-            this.canvas.height = this.height;
+
+            // Handle high DPI displays for crisp dots
+            const dpr = window.devicePixelRatio || 1;
+            this.canvas.width = this.width * dpr;
+            this.canvas.height = this.height * dpr;
+            this.ctx.scale(dpr, dpr);
+
             this.canvas.style.width = `${this.width}px`;
             this.canvas.style.height = `${this.height}px`;
+
             this.createDots();
+            if (this.isMobile) this.draw();
         }
 
         createDots() {
             this.dots = [];
+            // Optimize: Add padding to avoid drawing dots on the very edge
             const cols = Math.ceil(this.width / DOT_SPACING);
             const rows = Math.ceil(this.height / DOT_SPACING);
 
@@ -70,17 +93,24 @@
         }
 
         bindEvents() {
-            window.addEventListener("resize", () => this.resize());
-
-            document.addEventListener("mousemove", (e) => {
-                this.mouse.x = e.clientX;
-                this.mouse.y = e.clientY;
+            // Debounce resize
+            let resizeTimeout: number;
+            window.addEventListener("resize", () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = window.setTimeout(() => this.resize(), 100);
             });
 
-            document.addEventListener("mouseleave", () => {
-                this.mouse.x = -1000;
-                this.mouse.y = -1000;
-            });
+            if (!this.isMobile) {
+                document.addEventListener("mousemove", (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+
+                document.addEventListener("mouseleave", () => {
+                    this.mouse.x = -1000;
+                    this.mouse.y = -1000;
+                });
+            }
         }
 
         observeTheme() {
@@ -89,6 +119,8 @@
                     if (mutation.attributeName === "class") {
                         this.isDarkMode =
                             document.documentElement.classList.contains("dark");
+                        // Force redraw on theme change
+                        if (this.isMobile) this.draw();
                     }
                 });
             });
@@ -99,52 +131,74 @@
             this.ctx.clearRect(0, 0, this.width, this.height);
 
             // Theme Configuration
-            // Dark Mode matches #0F172B (Slate 900)
-            // Light Mode matches White
             const baseColorRGB = this.isDarkMode
-                ? "51, 65, 85"
-                : "203, 213, 225"; // Slate-700 / Slate-300
+                ? "51, 65, 85" // Slate-700
+                : "203, 213, 225"; // Slate-300
+
             const glowColorRGB = this.isDarkMode
-                ? "56, 189, 248"
-                : "99, 102, 241"; // Sky-400 / Indigo-500
+                ? "56, 189, 248" // Sky-400
+                : "99, 102, 241"; // Indigo-500
 
-            this.dots.forEach((dot) => {
-                const dx = this.mouse.x - dot.x;
-                const dy = this.mouse.y - dot.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+            // Pre-calculate style strings if possible, or just use efficient drawing
+            const baseFillStart = `rgba(${baseColorRGB}, `;
+            const glowFillStart = `rgba(${glowColorRGB}, `;
 
-                // Opacity Logic
-                // Base: Very subtle
-                // Highlight: Brighter near mouse
+            // Optimization: Batch drawing if possible, but opacity varies per dot
+            // Standard loop is fine for < 2000 dots on modern desktops
+
+            for (const dot of this.dots) {
                 let alpha = this.isDarkMode ? 0.1 : 0.2;
-                let isHighlight = false;
 
-                if (dist < MASK_RADIUS) {
-                    const intensity = 1 - Math.pow(dist / MASK_RADIUS, 1.5);
-                    alpha += intensity * 0.5;
-                    isHighlight = true;
+                // Only calculate distance if on desktop (mouse interaction)
+                if (!this.isMobile) {
+                    const dx = this.mouse.x - dot.x;
+                    const dy = this.mouse.y - dot.y;
+
+                    // Quick check using bounding box effectively (manhattan distance check first?)
+                    // Math.abs(dx) < MASK_RADIUS && Math.abs(dy) < MASK_RADIUS
+                    if (
+                        Math.abs(dx) < MASK_RADIUS &&
+                        Math.abs(dy) < MASK_RADIUS
+                    ) {
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < MASK_RADIUS) {
+                            const intensity =
+                                1 - Math.pow(dist / MASK_RADIUS, 1.5);
+                            alpha += intensity * 0.5;
+
+                            this.ctx.beginPath();
+                            this.ctx.fillStyle = `${glowFillStart}${Math.min(alpha, 1)})`;
+                            this.ctx.arc(
+                                dot.x,
+                                dot.y,
+                                DOT_RADIUS,
+                                0,
+                                Math.PI * 2,
+                            );
+                            this.ctx.fill();
+                            continue;
+                        }
+                    }
                 }
 
                 this.ctx.beginPath();
-
-                if (isHighlight && dist < MASK_RADIUS) {
-                    this.ctx.fillStyle = `rgba(${glowColorRGB}, ${Math.min(alpha, 1)})`;
-                } else {
-                    this.ctx.fillStyle = `rgba(${baseColorRGB}, ${Math.min(alpha, 1)})`;
-                }
-
+                this.ctx.fillStyle = `${baseFillStart}${Math.min(alpha, 1)})`;
                 this.ctx.arc(dot.x, dot.y, DOT_RADIUS, 0, Math.PI * 2);
                 this.ctx.fill();
-            });
+            }
         }
 
         animate() {
             this.draw();
-            requestAnimationFrame(() => this.animate());
+            this.animationFrameId = requestAnimationFrame(() => this.animate());
         }
     }
 
+    // Initialize only when the DOM is ready
     document.addEventListener("DOMContentLoaded", () => {
-        new RadialDots();
+        // Check if canvas exists before init
+        if (document.getElementById("radial-dots")) {
+            new RadialDots();
+        }
     });
 </script>
