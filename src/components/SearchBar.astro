@@ -1,111 +1,179 @@
 ---
-import { Search } from 'lucide-astro';
+import { Search } from "lucide-astro";
 ---
 
-<div class="relative w-full max-w-md group">
+<div class="relative w-full max-w-md group search-component">
   <div class="relative">
     <input
       type="text"
-      id="search-input"
       placeholder="Search cheatsheets..."
-      class="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-500/20 text-gray-900 dark:text-gray-100 outline-none transition-all"
+      class="search-input w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-slate-800 border border-transparent focus:border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-500/20 text-gray-900 dark:text-gray-100 outline-none transition-all"
       autocomplete="off"
     />
-    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+    <div
+      class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+    >
       <Search class="h-5 w-5 text-gray-400" />
     </div>
-    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-        <kbd class="hidden sm:inline-block px-1.5 py-0.5 text-xs text-gray-400 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 font-mono shadow-sm">/</kbd>
+    <div
+      class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+    >
+      <kbd
+        class="hidden sm:inline-block px-1.5 py-0.5 text-xs text-gray-400 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-slate-900 font-mono shadow-sm"
+        >/</kbd
+      >
     </div>
   </div>
 
   <div
-    id="search-results"
-    class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 hidden max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700"
+    class="search-results absolute z-50 w-full mt-2 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 hidden max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-slate-700"
   >
     <!-- Results injected here -->
   </div>
 </div>
 
 <script>
-  import Fuse from 'fuse.js';
+  import Fuse from "fuse.js";
 
-  let fuse: any;
-  const searchInput = document.getElementById('search-input') as HTMLInputElement;
-  const searchResults = document.getElementById('search-results');
+  let fuseInstance: any = null;
 
-  async function loadSearchIndex() {
-    if (fuse) return;
+  async function getFuse() {
+    if (fuseInstance) return fuseInstance;
+
     try {
-      const res = await fetch('/search-index.json');
+      const res = await fetch("/search-index.json");
       const data = await res.json();
-      fuse = new Fuse(data, {
+      fuseInstance = new Fuse(data, {
         keys: [
-            { name: 'title', weight: 0.7 },
-            { name: 'tags', weight: 0.2 },
-            { name: 'content', weight: 0.1 }
+          { name: "title", weight: 0.7 },
+          { name: "tags", weight: 0.2 },
+          { name: "content", weight: 0.1 },
         ],
         threshold: 0.4,
         includeScore: true,
         ignoreLocation: true,
       });
+      return fuseInstance;
     } catch (e) {
-      console.error('Failed to load search index', e);
+      console.error("Failed to load search index", e);
+      return null;
     }
   }
 
-  function showResults(results: any[]) {
-    if (!searchResults) return;
-    if (results.length === 0) {
-      searchResults.innerHTML = '<div class="p-4 text-gray-500 text-center text-sm">No results found</div>';
-      searchResults.classList.remove('hidden');
+  function initializeSearch(container: Element) {
+    console.log("Initializing search component", container);
+    const searchInput = container.querySelector(
+      ".search-input",
+    ) as HTMLInputElement;
+    const searchResults = container.querySelector(
+      ".search-results",
+    ) as HTMLElement;
+
+    if (!searchInput || !searchResults) {
+      console.error("Search elements not found in container");
       return;
     }
 
-    const html = results.map(result => `
-      <a href="/cheatsheets/${result.item.slug}" class="block p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800 last:border-0 transition-colors">
-        <div class="flex items-center justify-between">
-            <div class="font-medium text-gray-900 dark:text-gray-100">${result.item.title}</div>
-            ${result.item.category ? `<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">${result.item.category}</span>` : ''}
-        </div>
-      </a>
-    `).join('');
+    function showResults(results: any[]) {
+      console.log("Showing results:", results.length);
+      if (results.length === 0) {
+        searchResults.innerHTML =
+          '<div class="p-4 text-gray-500 text-center text-sm">No results found</div>';
+        searchResults.classList.remove("hidden");
+        return;
+      }
 
-    searchResults.innerHTML = html;
-    searchResults.classList.remove('hidden');
+      const html = results
+        .map(
+          (result) => `
+        <a href="/cheatsheets/${result.item.slug}" class="block p-3 hover:bg-gray-50 dark:hover:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 last:border-0 transition-colors">
+          <div class="flex items-center justify-between">
+              <div class="font-medium text-gray-900 dark:text-gray-100">${result.item.title}</div>
+              ${result.item.category ? `<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-400">${result.item.category}</span>` : ""}
+          </div>
+        </a>
+      `,
+        )
+        .join("");
+
+      searchResults.innerHTML = html;
+      searchResults.classList.remove("hidden");
+    }
+
+    searchInput.addEventListener("focus", () => {
+      console.log("Search input focused");
+      getFuse(); // Preload on focus
+    });
+
+    searchInput.addEventListener("click", (e) => {
+      // Prevent click from propagating to document listener immediately if needed,
+      // though container.contains check handles it.
+      console.log("Search input clicked");
+    });
+
+    searchInput.addEventListener("input", async (e) => {
+      const query = (e.target as HTMLInputElement).value;
+      console.log("Search input:", query);
+      if (!query) {
+        searchResults.classList.add("hidden");
+        return;
+      }
+
+      const fuse = await getFuse();
+      if (!fuse) {
+        console.error("Fuse not initialized");
+        return;
+      }
+
+      const results = fuse.search(query).slice(0, 8);
+      showResults(results);
+    });
+
+    // Keyboard shortcut (global logic handled elsewhere, but local escape here)
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        searchInput.blur();
+        searchResults.classList.add("hidden");
+      }
+    });
+
+    // Click outside to close
+    document.addEventListener("click", (e) => {
+      if (!container.contains(e.target as Node)) {
+        // Only hide if it's currently visible
+        if (!searchResults.classList.contains("hidden")) {
+          // console.log('Clicked outside search container, closing');
+          searchResults.classList.add("hidden");
+        }
+      } else {
+        // console.log('Clicked inside search container');
+      }
+    });
   }
 
-  searchInput?.addEventListener('focus', loadSearchIndex);
+  // Initialize all instances
+  document.querySelectorAll(".search-component").forEach(initializeSearch);
 
-  searchInput?.addEventListener('input', async (e) => {
-    const query = (e.target as HTMLInputElement).value;
-    if (!query) {
-      searchResults?.classList.add('hidden');
-      return;
-    }
-    
-    if (!fuse) await loadSearchIndex();
-    
-    const results = fuse.search(query).slice(0, 8);
-    showResults(results);
-  });
-
-  // Keyboard shortcut
-  document.addEventListener('keydown', (e) => {
-    if (e.key === '/' && document.activeElement !== searchInput) {
+  // Global Slash shortcut (once)
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "/" &&
+      !["INPUT", "TEXTAREA"].includes(
+        (document.activeElement as HTMLElement).tagName,
+      )
+    ) {
       e.preventDefault();
-      searchInput?.focus();
-    }
-    if (e.key === 'Escape') {
-        searchInput?.blur();
-        searchResults?.classList.add('hidden');
-    }
-  });
+      // Try to find a visible search input
+      const visibleInput = Array.from(
+        document.querySelectorAll(".search-input"),
+      ).find((input) => {
+        return (
+          input.getBoundingClientRect().height > 0 &&
+          window.getComputedStyle(input).visibility !== "hidden"
+        );
+      }) as HTMLInputElement;
 
-  // Click outside to close
-  document.addEventListener('click', (e) => {
-    if (!searchInput?.contains(e.target as Node) && !searchResults?.contains(e.target as Node)) {
-      searchResults?.classList.add('hidden');
+      visibleInput?.focus();
     }
   });
 </script>

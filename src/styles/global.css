@@ -1,6 +1,25 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  /* Deep Blue Theme Palette */
+  --color-slate-900: #0F172B;
+  /* User requested specific dark blue */
+  --color-slate-800: #1e293b;
+  /* Adjusted lighter shade for cards */
+  --color-slate-700: #334155;
+  /* Borders */
+
+  --color-blue-400: #60a5fa;
+  /* Primary link/heading color (light blue) */
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+
+  --color-pink-400: #f472b6;
+  /* Code highlighting color */
+  --color-pink-500: #ec4899;
+}
+
 /* Force dark mode to use class strategy */
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,7 +27,7 @@
   .scrollbar-thin {
     scrollbar-width: thin;
   }
-  
+
   .scrollbar-thumb-gray-300 {
     scrollbar-color: #d1d5db transparent;
   }
@@ -24,24 +43,87 @@
   }
 
   body {
-    @apply antialiased;
+    @apply antialiased bg-slate-900 text-slate-100;
+  }
+
+  /* Make <em> tags (citations like (docs.anthropic.com)) Blue */
+  em {
+    @apply text-blue-400 not-italic;
+    color: var(--color-blue-400);
+  }
+
+  /* Override Prose colors for Dark Mode (Deep Blue Theme) */
+  .dark .prose,
+  .prose.dark {
+    /* Main Content */
+    --tw-prose-body: #c9d1d9;
+    /* Off-white text */
+    --tw-prose-bold: #ffffff;
+    /* White bold */
+
+    /* Headings - Bright Blue */
+    --tw-prose-headings: var(--color-blue-400);
+
+    /* Code - Pink/Magenta Text on Dark Background */
+    --tw-prose-code: var(--color-pink-400);
+    --tw-prose-pre-code: var(--color-pink-400);
+    --tw-prose-pre-bg: #161b22;
+    /* Dark card background for code blocks */
+
+    /* Links - Blue */
+    --tw-prose-links: var(--color-blue-400);
+
+    /* UI Elements */
+    --tw-prose-lead: #8b949e;
+    --tw-prose-hr: #30363d;
+    --tw-prose-quotes: #c9d1d9;
+    --tw-prose-quote-borders: #30363d;
+    --tw-prose-th-borders: #30363d;
+    --tw-prose-td-borders: #21262d;
+
+    /* Invert variables (if used) */
+    --tw-prose-invert-body: #c9d1d9;
+    --tw-prose-invert-headings: var(--color-blue-400);
+    --tw-prose-invert-links: var(--color-blue-400);
+    --tw-prose-invert-code: var(--color-pink-400);
+    --tw-prose-invert-pre-code: var(--color-pink-400);
+    --tw-prose-invert-pre-bg: #161b22;
+
+    /* Table Column Specifics */
+    th:nth-child(2) {
+      @apply text-blue-400;
+      color: var(--color-blue-400);
+    }
+
+    td:nth-child(2) {
+      @apply text-blue-300;
+      color: #93c5fd;
+    }
+
+    :where(thead th:nth-child(2)) {
+      color: var(--color-blue-400);
+    }
+
+    :where(tbody td:nth-child(2)) {
+      color: #93c5fd;
+    }
   }
 }
 
 /* Custom scrollbar for Webkit */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent; 
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-600;
+  @apply bg-gray-400 dark:bg-gray-600;
 }
